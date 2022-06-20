@@ -59,12 +59,17 @@ class ChatPage extends ConsumerWidget {
               if (snapshot.hasData) {
                 final List<DocumentSnapshot> documents = snapshot.data!.docs;
                 return ListView(
+                    reverse: true,
                     padding: const EdgeInsets.only(left: 16, right: 16),
                     children: documents.map((document) {
                       return Card(
                         child: ListTile(
                             title: Text(document['text']),
-                            subtitle: Text(document['email']),
+                            subtitle: document['email'] == user.email
+                                ? const Text('自分の投稿')
+                                : Text(
+                                    document['email'],
+                                  ),
                             trailing: document['email'] == user.email
                                 ? IconButton(
                                     onPressed: () async {
