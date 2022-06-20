@@ -2,9 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutterfirebasechatapp/page/add_post_page.dart';
-import 'package:flutterfirebasechatapp/page/login_page.dart';
 import 'package:flutterfirebasechatapp/store/user_store.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatPage extends ConsumerWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -17,21 +16,20 @@ class ChatPage extends ConsumerWidget {
       try {
         FirebaseAuth auth = FirebaseAuth.instance;
         await auth.signOut();
-
-        await Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) {
-            return const LoginPage();
-          }),
-        );
+        context.go('/login');
       } on FirebaseAuthException catch (e) {
-        print('ログアウトに失敗しました...${e.toString()}');
+        ref.read(infoTextProvider.state).state =
+            'ログアウトに失敗しました...${e.toString()}';
         return null;
       }
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${user!.displayName}さん'),
+        title: Text(
+          '${user!.email}さん',
+          style: const TextStyle(fontSize: 14),
+        ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.logout),
@@ -48,7 +46,7 @@ class ChatPage extends ConsumerWidget {
             alignment: Alignment.center,
             child: const Text(
               '投稿内容',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
@@ -89,11 +87,8 @@ class ChatPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () async {
-          await Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) {
-            return const AddPostPage();
-          }));
+        onPressed: () {
+          context.go('/addPost');
         },
       ),
     );

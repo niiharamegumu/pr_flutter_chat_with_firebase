@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterfirebasechatapp/store/post_store.dart';
 import 'package:flutterfirebasechatapp/store/user_store.dart';
+import 'package:go_router/go_router.dart';
 
 class AddPostPage extends ConsumerWidget {
   const AddPostPage({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class AddPostPage extends ConsumerWidget {
           .doc()
           .set({'email': email, 'text': postText, 'date': date});
 
-      Navigator.of(context).pop();
+      context.go('/chat');
     }
 
     return Scaffold(
@@ -48,6 +49,15 @@ class AddPostPage extends ConsumerWidget {
                   child: const Text('投稿'),
                   onPressed: () async {
                     await postMessage();
+                  },
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  child: const Text('キャンセル'),
+                  onPressed: () {
+                    context.go('/chat');
                   },
                 ),
               )

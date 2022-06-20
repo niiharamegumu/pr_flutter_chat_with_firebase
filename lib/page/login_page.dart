@@ -1,19 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutterfirebasechatapp/page/chat_page.dart';
 import 'package:flutterfirebasechatapp/store/user_store.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider.state).state;
     final infoText = ref.watch(infoTextProvider.state).state;
     final email = ref.watch(emailProvider.state).state;
     final password = ref.watch(passwordProvider.state).state;
-    final displayName = ref.watch(displayNameProvider.state).state;
 
     Future registeUser() async {
       try {
@@ -25,18 +23,10 @@ class LoginPage extends ConsumerWidget {
 
         if (result.user != null) {
           ref.read(userProvider.state).state = result.user;
-          if (displayName == '') {
-            ref.read(displayNameProvider.state).state = '匿名';
-          }
-          await user!.updateDisplayName(displayName);
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) {
-              return const ChatPage();
-            }),
-          );
+          context.go('/chat');
         }
       } on FirebaseAuthException catch (e) {
-        ref.read(displayNameProvider.state).state =
+        ref.read(infoTextProvider.state).state =
             'ユーザー登録に失敗しました...${e.toString()}';
         return null;
       }
@@ -52,14 +42,10 @@ class LoginPage extends ConsumerWidget {
 
         if (result.user != null) {
           ref.read(userProvider.state).state = result.user;
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) {
-              return const ChatPage();
-            }),
-          );
+          context.go('/chat');
         }
       } on FirebaseAuthException catch (e) {
-        ref.read(displayNameProvider.state).state =
+        ref.read(infoTextProvider.state).state =
             'ログインに失敗しました...${e.toString()}';
         return null;
       }
@@ -82,12 +68,6 @@ class LoginPage extends ConsumerWidget {
               decoration: const InputDecoration(labelText: 'パスワード'),
               onChanged: (String val) {
                 ref.read(passwordProvider.state).state = val;
-              },
-            ),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'ユーザー名（default:匿名）'),
-              onChanged: (String val) {
-                ref.read(displayNameProvider.state).state = val;
               },
             ),
             Container(

@@ -20,6 +20,3 @@ final passwordProvider = StateProvider.autoDispose((ref) {
 final messageTextProvider = StateProvider.autoDispose((ref) {
   return '';
 });
-final displayNameProvider = StateProvider.autoDispose((ref) {
-  return '';
-});
